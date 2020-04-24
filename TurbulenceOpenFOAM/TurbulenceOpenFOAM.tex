@@ -1,0 +1,381 @@
+\documentclass [xcolor=svgnames, t] {beamer} 
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs, comment} 
+\usepackage[absolute, overlay]{textpos} 
+\useoutertheme{infolines} 
+\setbeamercolor{title in head/foot}{bg=internationalorange}
+\setbeamercolor{author in head/foot}{bg=dodgerblue}
+\usepackage{csquotes}
+\usepackage[style=verbose-ibid,backend=bibtex]{biblatex}
+\bibliography{bibfile}
+
+\usepackage{amsmath}
+\usepackage[makeroom]{cancel}
+
+
+\usepackage{textpos}
+
+\usepackage{tikz}
+
+\usetheme{Madrid}
+\definecolor{myuniversity}{RGB}{0, 60, 113}
+\definecolor{internationalorange}{RGB}{231, 93,  42}
+ 	\definecolor{dodgerblue}{RGB}{0, 119,202}
+\usecolortheme[named=myuniversity]{structure}
+\usepackage{tikz}
+
+
+
+\title[Turbulence Modeling (Group Project)]{Turbulence Modeling using OpenFOAM}
+\subtitle{(Introduction to Turbulence - ENGR5005G)}
+\institute[]{Mechanical Engineering \\Ontario Tech University }
+\titlegraphic{\includegraphics[height=2.5cm]{ontario.png}}
+\author[Arup Jyoti Chutia]{
+	Arup Jyoti Chutia ,
+	Brayden York and
+	Marcus Ebert }
+
+
+\institute[]{Mechanical Engineering \\Ontario Tech University }
+\date{\today}
+
+
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \usebeamercolor[fg]{footline}%
+    \hspace{1em}%
+    \insertframenumber/\inserttotalframenumber
+}
+
+\begin{document}
+\begin{frame}
+ \titlepage   
+\end{frame}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\logo{\includegraphics[scale=0.2]{ontario.png}~%
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{frame}{Outline}
+\vspace{1cm}
+\begin{center}
+   \begin{itemize}
+     \item Introduction
+     \item Objectives
+     \item Governing equations
+     \item OpenFOAM solvers
+     \item Geometry and problem parameters
+     \item Mesh and boundary conditions
+     \item Results
+     \item Conclusions and recommendations
+     \item References
+ \end{itemize} 
+\end{center}
+ 
+\end{frame}
+
+
+\begin{frame}{Introduction }
+Turbulent flow 
+ \begin{center}
+    
+
+\begin{columns}[onlytextwidth]
+\column{0.5\textwidth}
+\begin{itemize}
+\item Chaotic changes in field values :
+\begin{itemize}
+    \item velocity
+    \item pressure
+\end{itemize}
+\item High Reynolds number flow :
+\vspace{2.5mm}
+\begin{itemize}
+    \item low momentum diffusion ($\mu$)
+    \item high momentum convection  
+\end{itemize}
+
+%\item Mathematical models !
+
+
+
+
+\end{itemize}
+
+
+
+\column{0.5\textwidth}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\textwidth]{turb.jpg}
+    \caption{1. Flow visualisation (source: www.bronkhorst.com).}
+  %  \label{fig:my_label}
+\end{figure}
+
+\end{columns}
+
+\end{center}
+
+  
+\end{frame}
+
+\begin{frame}{Introduction (contd...)}
+\begin{center}
+    
+
+\begin{columns}[onlytextwidth]
+\column{0.5\textwidth}
+%\vspace{1 cm}
+Why turbulence modeling?\\
+\vspace{1cm}
+\begin{itemize}
+
+\item  No general analytical theory
+\item  Chaotic flow 
+\item  Closure Problem
+
+\item Mathematical models.
+
+\end{itemize}
+\column{0.5\textwidth}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\textwidth]{vel.png}
+    \caption{2.(a)Laminar and (b) turbulent velocity (source: https://nptel.ac.in).}
+  %  \label{fig:my_label}
+\end{figure}
+\end{columns}
+
+\end{center}
+
+
+
+\end{frame}
+
+
+
+\begin{frame}{Objectives}
+ \vspace{1.5cm}   
+\begin{itemize}
+    \item Understanding turbulence models in CFD (OpenFOAM).
+    \item Simulations for transient and steady state conditions.
+    \item Selecting  turbulence model.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Governing equations (Mean flow)\autocite{Lecture3}}
+  
+ \textit{\textbf{RANS} equations for incompressible flow}:\\
+  \textbf{Continuity equation}
+  
+     \begin{equation}
+      \frac{\partial \overline{u_{i}}}{\partial x_{i}}=0
+  \end{equation} 
+  
+ 
+  
+  
+  \textbf{Momentum equations }
+  \begin{equation}
+      \frac{\partial \overline{u_{i}} }{\partial t} + \overline{u_{j}} \frac{\partial \overline{u_{i}} }{\partial x_{j}} = -\frac{1}{\rho}\frac{\partial \overline{P}}{\partial x_{i}}+\nu\frac{\partial ^2\overline{u_{i}}}{\partial x_{j}\partial x_{j}}-\frac{\partial \overline{u_{i}'u_{j}'}}{\partial x_{j}}+\overline{g_{i}}
+  \end{equation}
+  
+   \textbf{Scaler equation }
+  \begin{equation}
+     \frac{\partial \overline{\phi}}{\partial t}+\overline{u_{i}}\frac{\partial \overline{\phi}}{\partial x_{i}}=\frac{\partial}{\partial x_{i}}(D\frac{\partial \overline{\phi}}{\partial x_{i}})-\frac{\partial (\overline{{u_{i}^{'}\phi^{'}}})}{\partial x_{i}}
+  \end{equation}
+  
+  
+\end{frame}
+
+
+\begin{frame}{Standard \textit{k-$\epsilon$} model\autocite{versteeg2007introduction}}
+
+$\nu_{eff}=\nu+\nu_{t},\,\, \nu_{t}=?$
+\begin{itemize}
+    
+
+\item k-turbulent kinetic energy
+
+\begin{equation}
+   k= \frac{1}{2}(\overline{u'^2}+\overline{v'^2}+\overline{w'^2})
+\end{equation}
+\item $\epsilon$ -turbulent dissipation
+  \begin{itemize}
+    \item rate of dissipation of $k$.
+\end{itemize} 
+\item Turbulent viscosity
+\begin{itemize}
+    \item  $\nu_{t}=0.09\frac{k^2}{\epsilon}$ 
+\end{itemize}
+\item Transport equations for $k$ and $\epsilon$
+ \end{itemize}   
+\end{frame}
+
+
+
+
+
+\begin{frame}{OpenFOAM solvers }
+   OpenFOAM solvers used in this project
+   \vspace{1cm}
+   \begin{itemize}
+       \item \textbf{simpleFoam\autocite{chapter6}}: for steady state simulation.
+       \begin{itemize}
+           \item RAS models: \textit{kEpsilon, kOmega} and \textit{LRR}.
+       \end{itemize}
+       \item \textbf{pisoFoam\autocite{chapter7}}:  transient simulation for incompressible flow.
+       \begin{itemize}
+          
+           \item LES models : \textit{Smagorinsky,
+          kEqn}.
+          \item RAS model: \textit{kEpsilon}
+     
+       \end{itemize}
+   \end{itemize}
+   
+\end{frame}
+
+\begin{frame}{Geometry and problem parameters } 
+   %\textbf{Geometry and problem parameters }
+   \begin{figure}
+       \centering
+       \includegraphics[width=0.9\textwidth]{pitz.PNG}
+       \caption{3.Schematic of geometry used for simulations (source: http://training.uhem.itu.edu.tr). }
+       %\label{fig:my_label}
+   \end{figure}
+   
+   
+\end{frame}
+
+\begin{frame}{ Mesh and boundary conditions}
+   \begin{figure}
+       \centering
+       \includegraphics[width=0.9\textwidth]{mesh.png}
+       \caption{4.Hexahedral mesh (source:www.cfdsupport.com).}
+      % \label{fig:my_label}
+   \end{figure} 
+   
+  Velocity  boundary conditions
+   \begin{itemize}
+       \item \textit{Inlet}: Dirichlet
+condition.
+       \item \textit{Outlet}: Zero-gradient condition.
+      \item  \textit{Upper Wall}: No slip .
+       \item \textit{Bottom Wall}: No slip.
+      % \item \textit{Side Walls}: No slip.
+   \end{itemize}
+   
+\end{frame}
+
+\begin{frame}{Turbulence – Steady State: Results}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.65\textwidth]{steady_velocity.png}
+    \caption{5.Velocity magnitude for \textit{kEpsilon, kOmega} \,\,and \text{LRR} models.}
+   % \label{fig:my_label}
+\end{figure}
+    
+\end{frame}
+
+\begin{frame}{Turbulence – Steady State: Results(contd...)}
+
+\begin{figure}
+    \centering
+   \includegraphics[width=0.65\textwidth]{steady_nut.png}
+    \caption{6.Turbulent viscosity for \textit{kEpsilon, kOmega}  \,\, and \text{LRR} models.}
+   %\label{fig:my_label}
+\end{figure}
+    
+\end{frame}
+
+
+\begin{frame}{Turbulence - Transient : Results (Smargorinsky model)}
+ \begin{figure}
+    \centering
+    \includegraphics[width=0.62\textwidth]{smagorinsky_velocity.png}
+    \caption{7.Smargorinsky velocity magnitude at different time steps.}
+   % \label{fig:my_label}
+\end{figure}
+       
+\end{frame}
+
+\begin{frame}{Turbulence - Transient : Results (Smargorinsky model)}
+ \begin{figure}
+    \centering
+    \includegraphics[width=1\textwidth]{FlowField.png}
+    \caption{8.Streamlines at 0.2s for Smargorinsky model.}
+   % \label{fig:my_label}
+\end{figure}
+       
+\end{frame}
+
+
+
+\begin{frame}{Turbulence - Transient : Results (kEpsilon)}
+    
+    \begin{figure}
+    \centering
+    \includegraphics[width=0.62\textwidth]{kEpsilon_velocity.png}
+    \caption{9.\textit{kEpsilon} model - Velocity magnitude at different
+time steps
+
+.}
+    \label{fig:my_label}
+\end{figure}
+    
+\end{frame}
+
+
+
+\begin{frame}{Turbulence - Transient : Results (contd...)}
+    
+    \begin{figure}
+    \centering
+    \includegraphics[width=0.65\textwidth]{transient_velocity_02.png}
+    \caption{10.Velocity vectors for different turbulence models - at
+0.2s}
+  %  \label{fig:my_label}
+\end{figure}
+    
+\end{frame}
+
+\begin{frame}{Turbulence - Transient : Results (contd...)}
+    
+    \begin{figure}
+    \centering
+    \includegraphics[width=0.6\textwidth]{nutturb.png}
+    \caption{11.Turbulent viscosity for different turbulence models - at
+0.2s}
+  %  \label{fig:my_label}
+\end{figure}
+    
+\end{frame}
+
+\begin{frame}{Conclusions and Recommendations}
+\textbf{Steady State Simulations}
+\begin{itemize}
+    \item Similar results for  \textit{kEpsilon, kOmega}\,\,and \textit{LRR}.
+    
+\end{itemize}
+\textbf{Transient Simulations}
+\begin{itemize}
+    \item LES -(\textit{Smagorinsky, kEqn)} detail, fluctuation based.
+    \item RAS -(\textit{kEpsilon}), averaging nature.
+\end{itemize}
+    
+\end{frame}
+\begin{frame}{References}
+   \printbibliography
+\end{frame}
+
+\end{document}
