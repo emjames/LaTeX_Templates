@@ -1,0 +1,6 @@
+[submodule "MathDept"]
+	path = MathDept
+	url = git@github.com:martinhelso/MathDept.git
+[submodule "fibeamer"]
+	path = fibeamer
+	url = git@github.com:Witiko/fibeamer.git
