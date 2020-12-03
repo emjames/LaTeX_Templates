@@ -1,0 +1,95 @@
+% !TEX program = xelatex
+
+\documentclass{beamer}
+% \usetheme{Rochester}
+\usetheme{Luebeck}
+% \usetheme{Berkeley}
+\usecolortheme{default}
+% \usecolortheme{seagull}
+
+% Font
+\usepackage[CJKspace]{xeCJK}
+% \setmainfont{Noto Sans}
+\setCJKmainfont{Noto Serif CJK SC}
+\setCJKsansfont{Noto Sans CJK SC}
+
+% Add ToC at the beginning of each section and highlight the current section
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Overview}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+\title{Presentation title}
+\subtitle{Subtitle}
+\institute{Deptartment of Mechanical Engineering}
+\author{何瑪諾 Emanuel Jaimes}
+\date{}
+
+
+% Remove headline
+\setbeamertemplate{headline}{%%
+}
+\beamertemplatenavigationsymbolsempty
+
+% Remove footer
+% \setbeamertemplate{footline}{
+% }
+
+% Add slide number to the navigation symbol
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \usebeamercolor[fg]{footline}%
+    \hspace{1em}%
+    % \insertframenumber/\inserttotalframenumber
+    \insertframenumber
+}
+
+
+% PROGRESS BAR
+%
+\setbeamercolor{progress bar progress}{use=progress bar,bg=progress bar.fg}
+\defbeamertemplate{footline}{progress bar}{
+  \dimen0=\paperwidth
+  \multiply\dimen0 by \insertframenumber
+  \divide\dimen0 by \inserttotalframenumber
+  \edef\progressbarwidth{\the\dimen0}
+
+  \leavevmode%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=.1ex,dp=1ex]{progress bar}
+    \begin{beamercolorbox}[wd=\progressbarwidth,ht=.1ex,dp=1ex]{progress bar progress}
+    \end{beamercolorbox}%
+  \end{beamercolorbox}%
+}
+
+\setbeamertemplate{footline}[progress bar]
+\setbeamercolor{progress bar}{fg=blue!50!black,bg=white!50!black}
+%
+% Presentation
+% 
+\begin{document}
+\begin{frame}
+  \titlepage
+\end{frame}
+  \begin{frame}
+    \frametitle{Overview}
+    \tableofcontents
+  \end{frame}
+
+  \section{Topic}
+  \begin{frame}
+    \frametitle{Topic}
+  \end{frame}
+
+
+% --- Q/A
+  \section{Q\&A}
+  \begin{frame}
+    \centering
+    \LARGE{Thank you \\}
+    \vspace{2em}
+    \LARGE{Q\&A}
+  \end{frame}
+\end{document}

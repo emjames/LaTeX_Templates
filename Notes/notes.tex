@@ -1,0 +1,40 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[left=1cm, top=2cm, right=1cm, bottom=4cm]{geometry}
+% \usepackage[margin=2cm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{paracol}
+\setlength{\columnseprule}{0.4pt}
+\setlength{\columnsep}{3em}
+
+
+% Header and footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Class}
+% \fancyhead[R]{2019}
+\renewcommand{\footrulewidth}{0.5pt}
+\fancyfoot[R]{\thepage}
+\fancyfoot[L]{
+  \textbf{Summary:}
+}
+
+% === Begin Document ===
+\begin{document}
+
+% \section{Chapter}
+  \columnratio{0.7}
+  \begin{paracol}{2}
+    \switchcolumn[0]
+
+
+    \switchcolumn[1]
+    \textbf{Questions:}
+    % \begin{itemize}
+    %   \item  Annotations go here
+    % \end{itemize}
+    \vspace{65em}
+
+  \end{paracol}
+\end{document}
+
