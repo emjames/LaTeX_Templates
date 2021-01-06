@@ -6,6 +6,7 @@
 % \usetheme{Berkeley}
 \usecolortheme{default}
 % \usecolortheme{seagull}
+\usepackage{appendixnumberbeamer}
 
 % Font
 \usepackage[CJKspace]{xeCJK}
@@ -24,7 +25,7 @@
 
 \title{Presentation title}
 \subtitle{Subtitle}
-\institute{Deptartment of Mechanical Engineering}
+\institute{Department of Mechanical Engineering}
 \author{何瑪諾 Emanuel Jaimes}
 \date{}
 
@@ -75,12 +76,17 @@
 \end{frame}
   \begin{frame}
     \frametitle{Overview}
-    \tableofcontents
+    \tableofcontents[pausesections]
   \end{frame}
 
   \section{Topic}
   \begin{frame}
     \frametitle{Topic}
+
+    \begin{itemize}[<+->]
+      \item An item
+      \item Another item
+    \end{itemize}
   \end{frame}
 
 
@@ -91,5 +97,12 @@
     \LARGE{Thank you \\}
     \vspace{2em}
     \LARGE{Q\&A}
+  \end{frame}
+
+% --- Appendix
+  \appendix
+  \begin{frame}
+    \frametitle{This is the appendix}
+    \centering
   \end{frame}
 \end{document}
